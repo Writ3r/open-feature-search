@@ -1,0 +1,40 @@
+# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# INFO:
+# https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry
+# https://stackoverflow.com/questions/58438367/how-to-access-maven-dependecy-from-github-package-registry-beta
+# https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication
+
+name: Java Maven Build
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  workflow_call:
+
+jobs:
+  build_test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml
+    - run: mkdir staging
+    - run: mkdir staging/ofs-core && cp ofs-core/target/*.jar staging/ofs-core && cp -r ofs-core/target/site staging/ofs-core
+    - run: cp LICENSE.txt staging
+    - uses: actions/upload-artifact@v4
+      with:
+        name: OFS Distribution
+        path: staging

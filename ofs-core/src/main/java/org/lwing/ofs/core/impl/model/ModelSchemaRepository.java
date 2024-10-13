@@ -1,0 +1,65 @@
+/*
+ * Copyright (C) 2024 Lucas Wing
+ * The Man, The Myth, The Legend.
+ */
+package org.lwing.ofs.core.impl.model;
+
+import java.util.Optional;
+import java.util.Set;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.lwing.ofs.core.api.config.OFSConfiguration;
+import org.lwing.ofs.core.api.VertexType;
+import org.lwing.ofs.core.api.exception.GraphIntegrityException;
+import org.lwing.ofs.core.api.exception.InternalKeywordException;
+import org.lwing.ofs.core.impl.property.PropertyRepository;
+import org.lwing.ofs.core.impl.schema.SchemaRepository;
+import org.janusgraph.core.JanusGraph;
+import org.lwing.ofs.core.api.schema.ModelSchema;
+import org.lwing.ofs.core.api.state.OFSTypeWrapper.OFSType;
+
+/**
+ *
+ * @author Lucas Wing
+ */
+public class ModelSchemaRepository extends SchemaRepository<ModelSchema> {
+
+    public ModelSchemaRepository(JanusGraph graph, PropertyRepository popertyRepository, OFSConfiguration config) {
+        super(VertexType.MODEL_SCHEMA, graph, popertyRepository, config);
+    }
+    
+    /**
+     * Stores a Schema object in the graph. Schemas are used to save what
+     * properties and their defaults go on a certain node. This is similar to
+     * how you'd represent in interface in Typescript (except with default props
+     * as well).
+     *
+     * @param schema input Schema object
+     * @return created Schema object's id
+     * @throws InternalKeywordException if user attempts to create the schema
+     * with an internal field
+     * @throws Exception generic JanusGraph exception
+     */
+    @Override
+    public String createSchema(ModelSchema schema) throws InternalKeywordException, Exception {
+        return super.createSchema(schema);
+    }
+    
+    /**
+     * Deletes the schema with the input id from the configured
+     * GraphTraversalSource
+     *
+     * @param schemaId identifier of the Schema to delete
+     * @throws GraphIntegrityException
+     * @throws Exception
+     */
+    public void deleteSchema(String schemaId) throws GraphIntegrityException, Exception {
+        super.deleteSchema(schemaId, OFSType.MODEL_SCHEMA);
+    }
+    
+    @Override
+    protected ModelSchema buildType(Vertex v, GraphTraversalSource g, Optional<Set<String>> select) {
+        return new RepoModelSchema(v, g);
+    }
+    
+}
