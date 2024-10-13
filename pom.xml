@@ -27,7 +27,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Writ3r Maven Packages</name>
-            <url>https://maven.pkg.github.com/Writ3r/gremlin-example</url>
+            <url>https://maven.pkg.github.com/Writ3r/open-feature-search</url>
         </repository>
     </distributionManagement>
 </project>
